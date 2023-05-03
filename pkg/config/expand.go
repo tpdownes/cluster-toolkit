@@ -520,6 +520,15 @@ func (dc *DeploymentConfig) addDefaultValidators() error {
 	return nil
 }
 
+// FindAllIntergroupReferences finds all intergroup references within the group
+func (dg DeploymentGroup) FindAllIntergroupReferences(bp Blueprint) []Reference {
+	igcRefs := []Reference{}
+	for _, mod := range dg.Modules {
+		igcRefs = append(igcRefs, FindIntergroupReferences(mod.Settings.AsObject(), mod, bp)...)
+	}
+	return igcRefs
+}
+
 // FindIntergroupReferences finds all references to other groups used in the given value
 func FindIntergroupReferences(v cty.Value, mod Module, bp Blueprint) []Reference {
 	g := bp.ModuleGroupOrDie(mod.ID)
@@ -567,4 +576,16 @@ func (bp *Blueprint) populateOutputs() {
 		}
 		return nil
 	})
+}
+
+// OutputNames returns the group-level output names constructed from module ID
+// and module-level output name
+func (dg DeploymentGroup) OutputNames() []string {
+	outputs := []string{}
+	for _, mod := range dg.Modules {
+		for _, output := range mod.Outputs {
+			outputs = append(outputs, AutomaticOutputName(output.Name, mod.ID))
+		}
+	}
+	return outputs
 }
