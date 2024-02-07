@@ -30,7 +30,7 @@ var gitTagVersion string
 var gitBranch string
 var gitCommitInfo string
 var gitCommitHash string
-var gitInitialHash   string
+var gitInitialHash string
 
 func main() {
 	sourcereader.ModuleFS = moduleFS
