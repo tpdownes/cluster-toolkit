@@ -28,6 +28,7 @@ login_node: "{{ slurm_cluster_name }}-slurm-login-*"
 controller_node: "{{ slurm_cluster_name }}-controller"
 post_deploy_tests:
 - test-validation/test-partitions.yml
+- test-validation/test-enroot.yml
 custom_vars:
   partitions:
   - ssdcomp
