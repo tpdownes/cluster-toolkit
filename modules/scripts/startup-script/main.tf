@@ -134,6 +134,16 @@ locals {
     },
   ]
 
+  managed_lustre_runner = !var.managed_lustre.enabled ? [] : [
+    {
+      type        = "ansible-local"
+      destination = "install_managed_lustre.yml"
+      content     = file("${path.module}/files/install_managed_lustre.yml")
+      args        = "-e managed_lustre_port=${var.managed_lustre.port}"
+    },
+  ]
+
+
   local_ssd_filesystem_enabled = can(coalesce(var.local_ssd_filesystem.mountpoint))
   raid_setup = !local.local_ssd_filesystem_enabled ? [] : [
     {
@@ -175,6 +185,7 @@ locals {
     local.raid_setup, # order RAID early to ensure filesystem is ready for subsequent runners
     local.configure_ssh_runners,
     local.docker_runner,
+    local.managed_lustre_runner,
     var.runners
   )
 

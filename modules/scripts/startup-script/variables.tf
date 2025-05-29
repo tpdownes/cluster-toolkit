@@ -137,7 +137,6 @@ variable "docker" {
     condition     = !can(coalesce(var.docker.daemon_config)) || can(jsondecode(var.docker.daemon_config))
     error_message = "var.docker.daemon_config should be set to a valid Docker daemon JSON configuration"
   }
-
 }
 
 # tflint-ignore: terraform_unused_declarations
@@ -161,6 +160,23 @@ variable "install_docker" {
   validation {
     condition     = var.install_docker == null
     error_message = "The variable install_docker has been removed. Use var.docker instead"
+  }
+}
+
+variable "managed_lustre" {
+  description = "Configure Managed Lustre (assumes driver already installed)"
+  type = object({
+    enabled = optional(bool, false)
+    port    = optional(number, 988)
+  })
+  default = {
+    enabled = false
+    port    = null
+  }
+
+  validation {
+    condition     = !can(coalesce(var.managed_lustre.port)) || var.managed_lustre.enabled
+    error_message = "var.managed_lustre.port should only be set if var.managed_lustre.enabled is set to true"
   }
 }
 
